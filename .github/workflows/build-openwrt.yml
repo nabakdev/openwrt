@@ -46,7 +46,8 @@ jobs:
       - name: Get The Official Config
         run: |
           cd openwrt
-          wget https://downloads.openwrt.org/releases/${OPENWRT_VERSION}/targets/ramips/mt76x8/config.buildinfo -O .config
+          LATEST_TAG=$(curl -s https://api.github.com/repos/openwrt/openwrt/releases/latest  | grep "tag_name" | awk '{print $2}' | tr -d '",\n' | cut -c 2-)
+          wget https://downloads.openwrt.org/releases/${LATEST_TAG}/targets/ramips/mt76x8/config.buildinfo -O .config
           sed -i '/CONFIG_TARGET_DEVICE/{/xiaomi/!d}' .config
 
       - name: Run Post-install Feeds Script
@@ -61,7 +62,7 @@ jobs:
         run: |
           cd openwrt
           make -j $(($(nproc)+1)) defconfig download clean world || make -j1 V=s
-          echo "build_tag=openwrt-${OPENWRT_VERSION}-ramips-mt76x8" >> ${GITHUB_OUTPUT}
+          echo "build_tag=${OPENWRT_VERSION}-ramips-mt76x8" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload The Firmware Image
