@@ -65,7 +65,7 @@ jobs:
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload The Firmware Image
-        uses: ncipollo/releases-action@main
+        uses: ncipollo/release-action@main
         if: ${{ steps.build.outputs.status }} == 'success' && !cancelled()
         with:
           tag: ${{ steps.compile.outputs.build_tag }}
