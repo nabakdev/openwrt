@@ -69,8 +69,8 @@ jobs:
         uses: ncipollo/release-action@main
         if: ${{ steps.build.outputs.status }} == 'success' && !cancelled()
         with:
-          tag: ${{ steps.compile.outputs.build_tag }}
-          artifacts: openwrt/bin/targets/*/*/*
+          tag: ${{ steps.build.outputs.build_tag }}
+          artifacts: openwrt/bin/targets/*/*/*.bin
           allowUpdates: true
           token: ${{ secrets.RELEASE_TOKEN }}
 
