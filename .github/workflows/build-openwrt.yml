@@ -48,7 +48,9 @@ jobs:
           cd openwrt
           LATEST_TAG=$(curl -s https://api.github.com/repos/openwrt/openwrt/releases/latest  | grep "tag_name" | awk '{print $2}' | tr -d '",\n' | cut -c 2-)
           wget https://downloads.openwrt.org/releases/${LATEST_TAG}/targets/ramips/mt76x8/config.buildinfo -O .config
+          grep "CONFIG_TARGET_DEVICE_ramips" exclude-device | grep -v "xiaomi" | sed 's/=y/=n/g'
           sed -i '/CONFIG_TARGET_DEVICE/{/xiaomi/!d}' .config
+          cat exclude-device >> .config
 
       - name: Run Post-install Feeds Script
         run: |

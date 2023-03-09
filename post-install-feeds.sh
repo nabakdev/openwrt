@@ -13,6 +13,7 @@ uci add_list system.ntp.server='0.id.pool.ntp.org'
 uci add_list system.ntp.server='1.id.pool.ntp.org'
 uci add_list system.ntp.server='2.id.pool.ntp.org'
 uci commit system
+/etc/init.d/system restart
 EOF
 
 # Change default LAN IP Address
@@ -23,12 +24,12 @@ EOF
 
 # Change wireless default configurations
 cat > files/etc/uci-defaults/99-wireless << EOF
-uci -q delete wireless.@wifi-iface[0].disabled
+uci -q delete wireless.@wifi-device[0].disabled
+uci set wireless.@wifi-device[0].country='ID'
+uci set wireless.@wifi-device[0].channel='11'
 uci set wireless.@wifi-iface[0].ssid='Ryzen'
 uci set wireless.@wifi-iface[0].encryption='psk-mixed'
 uci set wireless.@wifi-iface[0].key='hehehehe'
-uci set wireless.@wifi-device[0].country='ID'
-uci set wireless.@wifi-device[0].channel='11'
 uci commit wireless
 EOF
 
@@ -48,6 +49,7 @@ uci set firewall.@redirect[-1].src='wan'
 uci set firewall.@redirect[-1].src_dport='8080'
 uci set firewall.@redirect[-1].dest_ip='192.168.1.1'
 uci set firewall.@redirect[-1].dest_port='80'
+uci commit firewall
 
 uci add firewall redirect
 uci set firewall.@redirect[-2].dest='lan'
