@@ -47,7 +47,7 @@ uci set firewall.@redirect[-1].target='DNAT'
 uci set firewall.@redirect[-1].name='WEB'
 uci set firewall.@redirect[-1].src='wan'
 uci set firewall.@redirect[-1].src_dport='8080'
-uci set firewall.@redirect[-1].dest_ip='192.168.1.1'
+uci set firewall.@redirect[-1].dest_ip='10.11.12.13'
 uci set firewall.@redirect[-1].dest_port='80'
 uci commit firewall
 
@@ -57,7 +57,7 @@ uci set firewall.@redirect[-2].target='DNAT'
 uci set firewall.@redirect[-2].name='SSH'
 uci set firewall.@redirect[-2].src='wan'
 uci set firewall.@redirect[-2].src_dport='22'
-uci set firewall.@redirect[-2].dest_ip='192.168.1.1'
+uci set firewall.@redirect[-2].dest_ip='10.11.12.13'
 uci set firewall.@redirect[-2].dest_port='22'
 
 uci commit firewall
