@@ -28,7 +28,8 @@ jobs:
         run: |
           LATEST_STABLE_BRANCH=$(git ls-remote --heads ${OPENWRT_REPOSITORY} | tail -n1 | awk -F '/' '{print $3}')
           echo "OPENWRT_VERSION=${LATEST_STABLE_BRANCH}" >> $GITHUB_ENV
-          git clone -q --depth 1 --single-branch ${OPENWRT_REPOSITORY} -b ${LATEST_STABLE_BRANCH} openwrt
+          #git clone -q --depth 1 --single-branch ${OPENWRT_REPOSITORY} -b ${LATEST_STABLE_BRANCH} openwrt
+          git clone -q --depth 1 --single-branch ${OPENWRT_REPOSITORY} -b master openwrt
 
       - name: Run Pre-install Feeds Script
         run: |
