@@ -1,0 +1,2 @@
+uci set network.lan.ipaddr='10.11.12.13'
+uci commit network

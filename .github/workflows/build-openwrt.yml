@@ -20,9 +20,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo -E apt -y update
-          sudo -E apt -y install $(cat ubuntu-dependencies.txt)
-          sudo -E apt -y autoremove --purge
+          sudo -E apt -yqq update
+          sudo -E apt -yqq install $(cat ubuntu-dependencies.txt)
+          sudo -E apt -yqq autoremove --purge
 
       - name: Fetch OpenWrt Sources
         run: |
@@ -37,6 +37,7 @@ jobs:
           cd openwrt
           chmod +x ${GITHUB_WORKSPACE}/${PREINSTALL_SCRIPT}
           ${GITHUB_WORKSPACE}/${PREINSTALL_SCRIPT}
+          cp -rf ../patch/* .
 
       - name: Update The Feeds
         run: cd openwrt && ./scripts/feeds update -a
@@ -48,10 +49,12 @@ jobs:
         run: |
           cd openwrt
           LATEST_TAG=$(curl -s https://api.github.com/repos/openwrt/openwrt/releases/latest  | grep "tag_name" | awk '{print $2}' | tr -d '",\n' | cut -c 2-)
-          wget https://downloads.openwrt.org/releases/${LATEST_TAG}/targets/ramips/mt76x8/config.buildinfo -O .config
-          grep "CONFIG_TARGET_DEVICE_ramips" .config | grep -v "xiaomi" | sed 's/=y/=n/g' > exclude-device
-          sed -i '/CONFIG_TARGET_DEVICE/{/xiaomi/!d}' .config
-          cat exclude-device >> .config
+          #wget https://downloads.openwrt.org/releases/${LATEST_TAG}/targets/ramips/mt76x8/config.buildinfo -O .config
+          #grep "CONFIG_TARGET_DEVICE_ramips" .config | grep -v "xiaomi" | sed 's/=y/=n/g' > exclude-device
+          #sed -i '/CONFIG_TARGET_DEVICE/{/xiaomi/!d}' .config
+          #cat exclude-device >> .config
+          # write `diffconfig` to `.config`
+          cp diffconfig .config
 
       - name: Run Post-install Feeds Script
         run: |
@@ -65,7 +68,8 @@ jobs:
         run: |
           cd openwrt
           make -j $(($(nproc)+1)) defconfig download clean world || make -j1 V=s
-          echo "build_tag=${OPENWRT_VERSION}-ramips-mt76x8" >> ${GITHUB_OUTPUT}
+          #echo "build_tag=${OPENWRT_VERSION}-ramips-mt76x8" >> ${GITHUB_OUTPUT}
+          echo "build_tag=snapshot-$(cat bin/targets/*/*/version*)" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload The Firmware Image
@@ -73,7 +77,7 @@ jobs:
         if: ${{ steps.build.outputs.status }} == 'success' && !cancelled()
         with:
           tag: ${{ steps.build.outputs.build_tag }}
-          artifacts: openwrt/bin/targets/*/*/*.bin
+          artifacts: openwrt/bin/targets/*/*/*sysupgrade.bin
           allowUpdates: true
           token: ${{ secrets.RELEASE_TOKEN }}
 

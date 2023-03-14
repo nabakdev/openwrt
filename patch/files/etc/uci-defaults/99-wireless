@@ -1,0 +1,11 @@
+#!/bin/sh
+
+[ $(uci get wireless.@wifi-iface[0].ssid) != 'OpenWrt' ] && exit 0
+
+uci -q delete wireless.@wifi-device[0].disabled
+uci set wireless.@wifi-device[0].country='ID'
+uci set wireless.@wifi-device[0].channel='11'
+uci set wireless.@wifi-iface[0].ssid='Ryzen'
+uci set wireless.@wifi-iface[0].encryption='psk-mixed'
+uci set wireless.@wifi-iface[0].key='hehehehe'
+uci commit wireless
